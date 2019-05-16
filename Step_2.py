@@ -6,8 +6,10 @@
 # чтобы преобразовывать их возвращаемое значение в JSON-формат.
 # Не забудьте про сохранение корректного имени декорируемой функции.
 import json
+import functools
 
 def to_json(func):
+    @functools.wraps(func)
     def wrapped(*args, **kwargs):
         answ = json.dumps(func(*args, **kwargs))
         print(answ)
@@ -16,7 +18,7 @@ def to_json(func):
 
 @to_json
 def get_dict():
-    return {"a": 42} # Возврат словаря
+    return {get_dict.__name__: [("test", 10.0, None), False, 1]}  # Возврат словаря
 
 @to_json
 def get_sum(a, b):
@@ -27,10 +29,20 @@ def get_list():
     return ["a", None, 142, "54\'", '""'] # Возврат кортежа
 
 @to_json
+def get_set():
+    return (1, 2, 3, 10, 20) # Возврат списска
+
+@to_json
 def get_obj():
     return list(filter(bool, range(3)))# Возврат объекта
+
+@to_json
+def get_none():
+    return None # Возврат None
 
 get_dict()
 get_sum(54, 56)
 get_list()
 get_obj()
+get_none()
+get_set()
